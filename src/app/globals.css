@@ -2,26 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+@layer components {
+  .container {
+    @apply mx-auto w-full max-w-[1280px] px-[12px] md:px-[16px] xl:px-[0px];
   }
-}
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  .input-label {
+    @apply mb-[8px] text-[14px] font-medium leading-[16px] text-text;
+  }
+  .input-error-text {
+    @apply mt-[8px] text-[13px] font-normal leading-[16px] text-danger;
+  }
+  .input-label-required {
+    @apply relative top-[3px] text-danger;
+  }
+  .form-input {
+    @apply text-14-medium h-inputHeight w-full !rounded-[8px] border border-solid border-gray20 px-[12px] !outline-none focus:border-[1.5px] focus:border-active;
+  }
+  .form-input-error {
+    @apply border-[1.5px] border-danger;
+  }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  /* Typograpy */
+  /* Body */
+  .text-12-medium {
+    @apply text-[12px] font-medium leading-[16px] text-text;
+  }
+  .text-12-normal {
+    @apply text-[12px] font-normal leading-[16px] text-text;
+  }
+  .text-12-semibold {
+    @apply text-[12px] font-semibold leading-[16px] text-text;
+  }
+  .text-12-bold {
+    @apply text-[12px] font-bold leading-[16px] text-text;
+  }
+  .text-13-medium {
+    @apply text-[13px] font-medium leading-[18px] text-text;
+  }
+  .text-13-normal {
+    @apply text-[13px] font-normal leading-[18px] text-text;
+  }
+  .text-13-semibold {
+    @apply text-[13px] font-semibold leading-[18px] text-text;
+  }
+  .text-13-bold {
+    @apply text-[13px] font-bold leading-[18px] text-text;
+  }
+  .text-14-medium {
+    @apply text-[14px] font-medium leading-[20px] text-text;
+  }
+  .text-14-normal {
+    @apply text-[14px] font-normal leading-[20px] text-text;
+  }
+  .text-14-semibold {
+    @apply text-[14px] font-semibold leading-[20px] text-text;
+  }
+  .text-14-bold {
+    @apply text-[14px] font-bold leading-[20px] text-text;
+  }
+  .text-15-normal {
+    @apply text-[15px] font-normal leading-[22px] text-text;
+  }
+  .text-15-medium {
+    @apply text-[15px] font-medium leading-[22px] text-text;
+  }
+  .text-15-semibold {
+    @apply text-[15px] font-semibold leading-[22px] text-text;
+  }
+  .text-15-bold {
+    @apply text-[15px] font-bold leading-[22px] text-text;
+  }
+  .text-16-normal {
+    @apply text-[16px] font-normal leading-[24px] text-text;
+  }
+  .text-16-medium {
+    @apply text-[16px] font-medium leading-[24px] text-text;
+  }
+  .text-16-semibold {
+    @apply text-[16px] font-semibold leading-[24px] text-text;
+  }
+  .text-16-bold {
+    @apply text-[16px] font-bold leading-[24px] text-text;
+  }
+  .text-18-normal {
+    @apply text-[18px] font-normal leading-[26px] text-text;
+  }
+  .text-18-medium {
+    @apply text-[18px] font-medium leading-[26px] text-text;
+  }
+  .text-18-semibold {
+    @apply text-[18px] font-semibold leading-[26px] text-text;
+  }
+  .text-18-bold {
+    @apply text-[18px] font-bold leading-[26px] text-text;
+  }
+  /* Heading */
+  .text-h1 {
+    @apply text-[48px] font-bold leading-[58px] text-text;
+  }
+  .text-h2 {
+    @apply text-[40px] font-bold leading-[48px] text-text;
+  }
+  .text-h3 {
+    @apply text-[32px] font-bold leading-[38px] text-text;
+  }
+  .text-h4 {
+    @apply text-[24px] font-bold leading-[28px] text-text;
+  }
+  .text-h5 {
+    @apply text-[20px] font-bold leading-[24px] text-text;
+  }
 }
