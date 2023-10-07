@@ -1,30 +1,37 @@
-import { ArrowDownIcon } from '@/assets'
+import { ArrowRightIcon } from '@/assets'
 import { Colors } from '@/constants'
 import { UseVisible, useVisible } from '@/hooks'
 import { IconProps } from '@/types'
 import classNames from 'classnames'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ReactNode, forwardRef, useImperativeHandle } from 'react'
+import { ReactNode, forwardRef, useEffect, useImperativeHandle } from 'react'
 import { twMerge } from 'tailwind-merge'
 
+export type RenderCollapsibleTriggerParams = {
+  toggle: () => void
+  visible: boolean
+}
+
 export type CollapsibleProps = {
+  visible?: boolean // dành cho trường hợp muốn toggle thông qua state của cha
   content: ReactNode
   duration?: number // ms unit
-  children?: ReactNode // Nếu truyền thì phải toggle thông qua ref
   triggerTitle?: boolean
   triggerClassName?: string
   contentClassName?: string
   containerClassName?: string
   triggerTitleClassName?: string
   triggerIconProps?: IconProps
+  renderTrigger?: (params: RenderCollapsibleTriggerParams) => ReactNode // customize render trigger nếu không muốn dùng mặc định
 }
 
 export type CollapsibleForwardRef = Pick<UseVisible, 'onClose' | 'onOpen' | 'toggle'>
 
 export const Collapsible = forwardRef<CollapsibleForwardRef, CollapsibleProps>(function Child(
   {
+    visible: externalVisible,
     content,
-    children,
+    renderTrigger,
     duration = 200,
     triggerTitle = 'Xem thêm',
     triggerClassName,
@@ -35,7 +42,7 @@ export const Collapsible = forwardRef<CollapsibleForwardRef, CollapsibleProps>(f
   },
   ref
 ) {
-  const { onClose, onOpen, toggle, visible } = useVisible(true)
+  const { onClose, onOpen, toggle, setVisible, visible } = useVisible(false)
 
   useImperativeHandle(
     ref,
@@ -47,18 +54,26 @@ export const Collapsible = forwardRef<CollapsibleForwardRef, CollapsibleProps>(f
     [onClose, onOpen, toggle]
   )
 
+  useEffect(() => {
+    if (externalVisible !== undefined) {
+      setVisible(externalVisible)
+    }
+  }, [externalVisible, setVisible])
+
   return (
     <div className={containerClassName}>
-      {children ?? (
+      {renderTrigger ? (
+        renderTrigger({ toggle, visible })
+      ) : (
         <button onClick={toggle} className={twMerge('flex items-center', triggerClassName)}>
           <span className={twMerge('text-14-medium', triggerTitleClassName)}>{triggerTitle} </span>
           <span
             className={classNames(
               'transform transition-all duration-300',
-              visible && 'rotate-[180deg]'
+              visible && 'rotate-[90deg]'
             )}
           >
-            <ArrowDownIcon fill={Colors.gray80} size={20} {...triggerIconProps} />
+            <ArrowRightIcon fill={Colors.gray80} size={20} {...triggerIconProps} />
           </span>
         </button>
       )}

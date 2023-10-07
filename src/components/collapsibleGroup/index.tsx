@@ -1,93 +1,139 @@
-import { ArrowDownIcon } from '@/assets'
+import { ArrowRightIcon } from '@/assets'
 import { Colors } from '@/constants'
-import { UseVisible, useVisible } from '@/hooks'
-import { IconProps } from '@/types'
 import classNames from 'classnames'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ReactNode, forwardRef, useImperativeHandle } from 'react'
+import { produce } from 'immer'
+import { useState } from 'react'
 import { twMerge } from 'tailwind-merge'
+import { Collapsible, CollapsibleProps } from '..'
 
-export type CollapsibleProps = {
-  content: ReactNode
-  duration?: number // ms unit
-  children?: ReactNode // Nếu truyền thì phải toggle thông qua ref
-  triggerTitle?: boolean
-  triggerClassName?: string
-  contentClassName?: string
-  containerClassName?: string
-  triggerTitleClassName?: string
-  triggerIconProps?: IconProps
+type CollapsibleGroupOption = Pick<
+  CollapsibleProps,
+  | 'content'
+  | 'containerClassName'
+  | 'contentClassName'
+  | 'duration'
+  | 'triggerClassName'
+  | 'triggerTitleClassName'
+  | 'triggerIconProps'
+> &
+  Partial<Pick<CollapsibleProps, 'renderTrigger'>> & {
+    title: string
+  }
+
+export type CollapsibleGroupProps = {
+  className?: string
+  options: CollapsibleGroupOption[]
+  allowExpandMultiple?: boolean // Nếu là true, sẽ cho phép mở nhiều collapse item cùng 1 lúc, mặc định sẽ chỉ mở được 1
 }
 
-export type CollapsibleForwardRef = Pick<UseVisible, 'onClose' | 'onOpen' | 'toggle'>
+export const CollapsibleGroup = ({
+  options,
+  className,
+  allowExpandMultiple = true,
+}: CollapsibleGroupProps) => {
+  const [idsVisible, setIdsVisible] = useState<number[]>([])
 
-export const Collapsible = forwardRef<CollapsibleForwardRef, CollapsibleProps>(function Child(
-  {
-    content,
-    children,
-    duration = 200,
-    triggerTitle = 'Xem thêm',
-    triggerClassName,
-    contentClassName,
-    triggerIconProps,
-    containerClassName,
-    triggerTitleClassName,
-  },
-  ref
-) {
-  const { onClose, onOpen, toggle, visible } = useVisible(true)
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      onClose,
-      onOpen,
-      toggle,
-    }),
-    [onClose, onOpen, toggle]
-  )
+  const handleSetVisible = (id: number) => {
+    if (allowExpandMultiple) {
+      setIdsVisible((prev) =>
+        produce(prev, (draft) => {
+          const index = draft.findIndex((_id) => _id === id)
+          if (index !== -1) {
+            draft.splice(index, 1)
+          } else {
+            draft.push(id)
+          }
+        })
+      )
+    } else {
+      setIdsVisible([id])
+    }
+  }
 
   return (
-    <div className={containerClassName}>
-      {children ?? (
-        <button onClick={toggle} className={twMerge('flex items-center', triggerClassName)}>
-          <span className={twMerge('text-14-medium', triggerTitleClassName)}>{triggerTitle} </span>
-          <span
-            className={classNames(
-              'transform transition-all duration-300',
-              visible && 'rotate-[180deg]'
-            )}
-          >
-            <ArrowDownIcon fill={Colors.gray80} size={20} {...triggerIconProps} />
-          </span>
-        </button>
+    <div
+      className={twMerge(
+        'overflow-hidden rounded-[8px] border border-solid border-gray20',
+        className
       )}
+    >
+      {options.map((item, index) => {
+        const visible = idsVisible.includes(index)
 
-      <AnimatePresence>
-        {visible ? (
-          <motion.div
-            key="collapsible-content"
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            className={twMerge('overflow-hidden', contentClassName)}
-            variants={{
-              visible: {
-                opacity: 1,
-                height: 'auto',
-                transition: { when: 'beforeChildren', duration: duration / 1000 },
-              },
-              hidden: {
-                opacity: 0,
-                height: 0,
-                transition: { when: 'afterChildren', duration: duration / 1000 },
-              },
-            }}
-          >
-            {content}
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+        return (
+          <Collapsible
+            key={index}
+            visible={visible}
+            content={item.content}
+            contentClassName={item.contentClassName}
+            containerClassName={classNames(
+              'border-b border-solid border-gray20 last:border-none',
+              item.containerClassName
+            )}
+            renderTrigger={
+              item?.renderTrigger
+                ? item.renderTrigger
+                : ({ visible }) => (
+                    <div
+                      onClick={() => handleSetVisible(index)}
+                      className={classNames(
+                        'flex items-center bg-gray10 p-[12px]',
+                        item.triggerClassName
+                      )}
+                    >
+                      <span
+                        className={classNames(
+                          'mr-[8px] transform transition-all duration-300',
+                          visible && 'rotate-[90deg]'
+                        )}
+                      >
+                        <ArrowRightIcon fill={Colors.gray80} size={24} {...item.triggerIconProps} />
+                      </span>
+                      <span className={item.triggerTitleClassName}>{item.title}</span>
+                    </div>
+                  )
+            }
+          />
+        )
+      })}
     </div>
   )
-})
+}
+
+/*
+  Example usage: 
+  <CollapsibleGroup
+    options={[
+      {
+        key: 1,
+        title: 'This is title from group 1',
+        content: (
+          <div className="p-[12px]">
+            A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it
+            can be found as a welcome guest in many households across the world.{' '}
+          </div>
+        ),
+      },
+      {
+        key: 2,
+        title: 'This is title from group 2',
+        content: (
+          <div className="p-[12px]">
+            A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it
+            can be found as a welcome guest in many households across the world.{' '}
+          </div>
+        ),
+      },
+      {
+        key: 3,
+        title: 'This is title from group 3',
+        content: (
+          <div className="p-[12px]">
+            A dog is a type of domesticated animal. Known for its loyalty and faithfulness, it
+            can be found as a welcome guest in many households across the world.{' '}
+          </div>
+        ),
+      },
+    ]}
+  />
+*/

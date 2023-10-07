@@ -9,6 +9,7 @@ export type ImageProps = Omit<RImageProps, 'alt'> & {
   className?: string
 }
 
+// extends từ Image của next, load default image nếu không thể load được hình
 export const Image = ({ className, src, ...props }: ImageProps) => {
   const [source, setSource] = useState<string | StaticImport>(src)
 

@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react'
 
 export type UseVisible = {
   visible: boolean
+  setVisible: (visible: boolean) => void
   onClose: () => void
   onOpen: () => void
   toggle: () => void
@@ -18,6 +19,7 @@ export const useVisible = (active = false): UseVisible => {
 
   return {
     visible,
+    setVisible,
     onClose,
     onOpen,
     toggle,

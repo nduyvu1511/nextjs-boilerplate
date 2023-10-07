@@ -19,7 +19,7 @@
     @apply relative top-[3px] text-danger;
   }
   .form-input {
-    @apply text-14-medium h-inputHeight w-full !rounded-[8px] border border-solid border-gray20 px-[12px] !outline-none focus:border-[1.5px] focus:border-active;
+    @apply text-14-medium h-inputHeight w-full !rounded-[8px] border border-solid border-gray20 px-[12px] !outline-none transition-all duration-200 focus:border-[1.5px] focus:border-active;
   }
   .form-input-error {
     @apply border-[1.5px] border-danger;
